@@ -1,4 +1,6 @@
-use crate::dom;
+use std::collections::HashMap;
+
+use crate::dom::{self, Node};
 
 struct Parser{
     position: usize,
@@ -44,6 +46,82 @@ impl Parser{
             'a'..='z'|'A'..='Z'|'0'..='9'=> true,
             _=>false
         })    
+    }
+
+    fn parse_node(&mut self)-> dom::Node{
+        match  self.next_character() {
+            '<' =>self.parse_element(),
+            _ =>self.parse_text()
+            
+        }
+
+
+    
+    }
+
+    fn parse_text(&mut self)->dom::Node{
+        dom::text(self.consume_while(|c| c!='<'))
+    }
+
+    fn parse_element(&mut self)->dom::Node{
+        assert!(self.consume_character()=='<');
+        let tag_name = self.parse_tag();
+        let tag_attribute = self.parse_attributes();
+        assert!(self.consume_character()=='>');
+
+        let children  = self.parse_nodes();
+
+        assert!(self.consume_character() == '<');
+        assert!(self.consume_character() == '/');
+        assert!(self.parse_tag() == tag_name);
+        assert!(self.consume_character() == '>');
+
+        return dom::elem(tag_name, tag_attribute, children);
+
+   
+    }
+    
+    fn parse_attr(&mut self)->(String,String){
+        let name = self.parse_tag();
+        assert!(self.consume_character() == '=');
+        let value = self.parse_attr_value();
+        return (name,value);
+    }
+
+    fn parse_attr_value(&mut self)->String{
+        let open_quote = self.consume_character();
+        assert!(open_quote == '"' || open_quote == '\'');
+        let value = self.consume_while(|c| c != open_quote);
+        assert!(self.consume_character() == open_quote);
+        return value;
+    }
+
+    fn parse_attributes(&mut self)->dom::AttrMap{
+        let mut attributes = HashMap::new();
+        loop {
+            self.consume_whitespace();
+            if self.next_character()=='>'{
+                break;
+            }
+            let (name,value) = self.parse_attr();
+            attributes.insert(name, value);
+        }
+        return attributes;
+    }
+
+    fn parse_nodes(&mut self)->Vec<dom::Node>{
+        let mut nodes = Vec::new();
+        loop {
+            self.consume_whitespace();
+            if self.eof() || self.starts_with("</") {
+                break;
+            }
+
+            nodes.push(self.parse_node());
+        }
+
+        return  nodes;
+
     }
 
 }
