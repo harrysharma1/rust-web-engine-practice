@@ -8,6 +8,7 @@ struct Node{
 #[derive(Debug)]
 enum NodeType{
     Text(String),
+    Comment(String),
     Element(ElementData), 
 }
 #[derive(Debug)]
@@ -22,6 +23,13 @@ fn text(data: String)-> Node{
     Node{
         child: Vec::new(),
         node_type: NodeType::Text(data),
+    }
+}
+
+fn comment(data: String)->Node{
+    Node { 
+        child: Vec::new(), 
+        node_type: NodeType::Comment(data),  
     }
 }
 
