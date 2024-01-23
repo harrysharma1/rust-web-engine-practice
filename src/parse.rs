@@ -1,3 +1,4 @@
+use crate::dom;
 
 struct Parser{
     position: usize,
@@ -32,6 +33,10 @@ impl Parser{
                 result.push(self.consume_character());
             }
             return result;
+    }
+
+    fn consume_whitespace(&mut self){
+        self.consume_while(char::is_whitespace);
     }
 
 }
