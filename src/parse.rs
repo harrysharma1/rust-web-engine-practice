@@ -126,4 +126,12 @@ impl Parser{
 
 }
 
-    
+pub fn parse(source:String)-> dom::Node{
+    let mut nodes = Parser{ position:0,input:source}.parse_nodes();
+    if nodes.len()==1{
+        nodes.swap_remove(0)
+    }else{
+        dom::elem("html".to_string(), HashMap::new(), nodes)
+    }
+
+} 
