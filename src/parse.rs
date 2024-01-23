@@ -39,6 +39,13 @@ impl Parser{
         self.consume_while(char::is_whitespace);
     }
 
+    fn parse_tag(&mut self)->String{
+        self.consume_while(|x|  match x  {
+            'a'..='z'|'A'..='Z'|'0'..='9'=> true,
+            _=>false
+        })    
+    }
+
 }
 
     
