@@ -5,7 +5,7 @@ struct Parser{
 }
 
 impl Parser{
-    fn next_char(&self)->char{
+    fn next_character(&self)->char{
         self.input[self.position..].chars().next().unwrap()
     }
 
@@ -25,5 +25,15 @@ impl Parser{
         return current_character;
     }
 
-    
+    fn consume_while<F>(&mut self, test: F) -> String
+    where F: Fn(char) -> bool {
+            let mut result = String::new();
+            while !self.eof() && test(self.next_character()) {
+                result.push(self.consume_character());
+            }
+            return result;
+    }
+
 }
+
+    
