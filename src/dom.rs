@@ -5,12 +5,12 @@ struct Node{
     node_type:NodeType,
 
 }
-
+#[derive(Debug)]
 enum NodeType{
     Text(String),
     Element(ElementData), 
 }
-
+#[derive(Debug)]
 struct ElementData{
     tag_name: String,
     attribute: AttrMap,
